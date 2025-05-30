@@ -16,17 +16,17 @@ public class CountryController {
 
     @GetMapping("/countries")
     public String listCountries(@RequestParam(required = false) String sortBy,
-                                @RequestParam(required = false) String continent,
-                                Model model) {
+            @RequestParam(required = false) String continent,
+            Model model) {
         model.addAttribute("countries", countryService.getAll(sortBy, continent));
         return "countries";
     }
 
     @PostMapping("/countries/add")
     public String addCountry(@RequestParam String name,
-                             @RequestParam String capital,
-                             @RequestParam String continent,
-                             @RequestParam String flagUrl) {
+            @RequestParam String capital,
+            @RequestParam String continent,
+            @RequestParam String flagUrl) {
         countryService.addCountry(new Country(name, capital, continent, flagUrl));
         return "redirect:/countries";
     }
@@ -46,10 +46,10 @@ public class CountryController {
 
     @PostMapping("/countries/update")
     public String updateCountry(@RequestParam String originalName,
-                                @RequestParam String name,
-                                @RequestParam String capital,
-                                @RequestParam String continent,
-                                @RequestParam String flagUrl) {
+            @RequestParam String name,
+            @RequestParam String capital,
+            @RequestParam String continent,
+            @RequestParam String flagUrl) {
         countryService.updateCountry(originalName, new Country(name, capital, continent, flagUrl));
         return "redirect:/countries";
     }
