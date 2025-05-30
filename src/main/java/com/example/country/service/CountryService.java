@@ -1,9 +1,12 @@
+
 package com.example.country.service;
 
 import com.example.country.model.Country;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,21 +36,23 @@ public class CountryService {
                 .collect(Collectors.toList());
     }
 
-    public void addCountry(Country country) {
-        countries.add(country);
+    public void addCountry(Country c) {
+        countries.add(c);
     }
 
-    public void deleteCountry(String name) {
+    public void deleteCountryByName(String name) {
         countries.removeIf(c -> c.getName().equalsIgnoreCase(name));
     }
 
-    public void updateCountry(String name, Country updated) {
-        for (int i = 0; i < countries.size(); i++) {
-            if (countries.get(i).getName().equalsIgnoreCase(name)) {
-                countries.set(i, updated);
-                break;
-            }
-        }
+    public Country getByName(String name) {
+        return countries.stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst().orElse(null);
+    }
+
+    public void updateCountry(String originalName, Country updated) {
+        deleteCountryByName(originalName);
+        addCountry(updated);
     }
 
     private Comparator<Country> getComparator(String sortBy) {

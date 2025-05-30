@@ -1,3 +1,4 @@
+
 package com.example.country.controller;
 
 import com.example.country.model.Country;
@@ -15,22 +16,41 @@ public class CountryController {
 
     @GetMapping("/countries")
     public String listCountries(@RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String continent,
-            Model model) {
+                                @RequestParam(required = false) String continent,
+                                Model model) {
         model.addAttribute("countries", countryService.getAll(sortBy, continent));
-        model.addAttribute("newCountry", new Country()); // para o formulário
         return "countries";
     }
 
     @PostMapping("/countries/add")
-    public String addCountry(@ModelAttribute Country country) {
-        countryService.addCountry(country);
+    public String addCountry(@RequestParam String name,
+                             @RequestParam String capital,
+                             @RequestParam String continent,
+                             @RequestParam String flagUrl) {
+        countryService.addCountry(new Country(name, capital, continent, flagUrl));
         return "redirect:/countries";
     }
 
     @PostMapping("/countries/delete")
     public String deleteCountry(@RequestParam String name) {
-        countryService.deleteCountry(name);
+        countryService.deleteCountryByName(name);
+        return "redirect:/countries";
+    }
+
+    @GetMapping("/countries/edit")
+    public String editCountry(@RequestParam String name, Model model) {
+        Country c = countryService.getByName(name);
+        model.addAttribute("country", c);
+        return "edit_country";
+    }
+
+    @PostMapping("/countries/update")
+    public String updateCountry(@RequestParam String originalName,
+                                @RequestParam String name,
+                                @RequestParam String capital,
+                                @RequestParam String continent,
+                                @RequestParam String flagUrl) {
+        countryService.updateCountry(originalName, new Country(name, capital, continent, flagUrl));
         return "redirect:/countries";
     }
 }

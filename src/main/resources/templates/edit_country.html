@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar País</title>
+</head>
+<body>
+<h2>Editar País</h2>
+<form th:action="@{/countries/update}" method="post">
+    <input type="hidden" name="originalName" th:value="${country.name}" />
+    <input type="text" name="name" th:value="${country.name}" required />
+    <input type="text" name="capital" th:value="${country.capital}" required />
+    <input type="text" name="continent" th:value="${country.continent}" required />
+    <input type="text" name="flagUrl" th:value="${country.flagUrl}" required />
+    <button type="submit">Salvar Alterações</button>
+</form>
+</body>
+</html>

@@ -1,62 +1,134 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
+    <meta charset="UTF-8">
     <title>Lista de Países</title>
-    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e0e0e0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        img {
+            width: 50px;
+        }
+
+        .add-form {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Lista de Países</h1>
 
-    <form method="get">
-        <label for="continent">Filtrar por continente:</label>
-        <select name="continent" id="continent" th:value="${param.continent}">
-            <option value="">Todos</option>
-            <option value="África" th:selected="${param.continent == 'África'}">África</option>
-            <option value="América do Sul" th:selected="${param.continent == 'América do Sul'}">América do Sul</option>
-            <option value="América do Norte" th:selected="${param.continent == 'América do Norte'}">América do Norte</option>
-            <option value="Europa" th:selected="${param.continent == 'Europa'}">Europa</option>
-            <option value="Ásia" th:selected="${param.continent == 'Ásia'}">Ásia</option>
-            <option value="Oceania" th:selected="${param.continent == 'Oceania'}">Oceania</option>
-            <option value="Europa/Ásia" th:selected="${param.continent == 'Europa/Ásia'}">Europa/Ásia</option>
-        </select>
-
-        <label for="sortBy">Ordenar por:</label>
-        <select name="sortBy" id="sortBy" th:value="${param.sortBy}">
-            <option value="name" th:selected="${param.sortBy == 'name'}">Nome</option>
-            <option value="capital" th:selected="${param.sortBy == 'capital'}">Capital</option>
-            <option value="continent" th:selected="${param.sortBy == 'continent'}">Continente</option>
-        </select>
-        <button type="submit">Filtrar</button>
+    <!-- Formulário de adição -->
+    <form class="add-form" method="post" action="/countries/add">
+        <div class="form-group">
+            <label for="name">Nome:</label>
+            <input type="text" name="name" required>
+            <label for="capital">Capital:</label>
+            <input type="text" name="capital" required>
+        </div>
+        <div class="form-group">
+            <label for="continent">Continente:</label>
+            <input type="text" name="continent" required>
+            <label for="flagUrl">URL da Bandeira:</label>
+            <input type="text" name="flagUrl" required>
+        </div>
+        <button type="submit">Adicionar País</button>
     </form>
 
+    <!-- Filtros -->
+    <form method="get" action="/countries">
+        <label for="sortBy">Ordenar por:</label>
+        <select name="sortBy" id="sortBy">
+            <option value="name">Nome</option>
+            <option value="capital">Capital</option>
+            <option value="continent">Continente</option>
+        </select>
+
+        <label for="continent">Filtrar por continente:</label>
+        <select name="continent" id="continent">
+            <option value="">Todos</option>
+            <option value="América do Sul">América do Sul</option>
+            <option value="América do Norte">América do Norte</option>
+            <option value="Europa">Europa</option>
+            <option value="Ásia">Ásia</option>
+            <option value="África">África</option>
+            <option value="Oceania">Oceania</option>
+            <option value="Europa/Ásia">Europa/Ásia</option>
+        </select>
+
+        <button type="submit">Aplicar</button>
+    </form>
+
+    <!-- Tabela de países -->
     <table>
-        <tr>
-            <th>Bandeira</th>
-            <th>Nome</th>
-            <th>Capital</th>
-            <th>Continente</th>
-        </tr>
-        <tr th:each="country : ${countries}">
-            <td><img th:src="${country.flagUrl}" alt="Flag" width="80"/></td>
-            <td th:text="${country.name}"></td>
-            <td th:text="${country.capital}"></td>
-            <td th:text="${country.continent}"></td>
-        </tr>
-        <h2>Adicionar País</h2>
-            <form th:action="@{/countries/add}" method="post" th:object="${newCountry}">
-                <input type="text" th:field="*{name}" placeholder="Nome" required>
-                <input type="text" th:field="*{capital}" placeholder="Capital" required>
-                <input type="text" th:field="*{continent}" placeholder="Continente" required>
-                <input type="text" th:field="*{flagUrl}" placeholder="URL da Bandeira" required>
-                <button type="submit">Adicionar</button>
-            </form>
-
-            <h2>Excluir País</h2>
-            <form th:action="@{/countries/delete}" method="post">
-                <input type="text" name="name" placeholder="Nome do país" required>
-                <button type="submit">Excluir</button>
-            </form>
-
+        <thead>
+            <tr>
+                <th>Bandeira</th>
+                <th>Nome</th>
+                <th>Capital</th>
+                <th>Continente</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="country : ${countries}">
+                <td><img th:src="${country.flagUrl}" alt="Bandeira" /></td>
+                <td th:text="${country.name}"></td>
+                <td th:text="${country.capital}"></td>
+                <td th:text="${country.continent}"></td>
+                <td>
+                   <form th:action="@{/countries/delete}" method="post">
+                        <input type="hidden" name="name" th:value="${country.name}"/>
+                        <button type="submit">Remover</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </body>
+
 </html>
