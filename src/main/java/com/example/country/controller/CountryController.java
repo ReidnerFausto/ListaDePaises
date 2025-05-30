@@ -14,6 +14,11 @@ public class CountryController {
     @Autowired
     private CountryService countryService;
 
+    @GetMapping("/")
+    public String redirectToCountries() {
+        return "redirect:/countries";
+    }
+
     @GetMapping("/countries")
     public String listCountries(@RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String continent,
